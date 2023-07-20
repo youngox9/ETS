@@ -6,11 +6,8 @@
 </template>
 <script setup>
 import { useStore } from "vuex";
-import { ref, unref, computed, reactive, watch, toRefs, onMounted } from "vue";
-import { ElNotification, ClickOutside as vClickOutside } from "element-plus";
-import { useRoute, useRouter } from "vue-router";
+import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
-import axios from "@/axios";
 
 const props = defineProps([]);
 const { t } = useI18n();

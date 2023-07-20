@@ -6,6 +6,7 @@
 </template>
 
 <script setup>
+import { v4 as uuidv4 } from "uuid";
 import { useStore } from "vuex";
 import { onMounted, computed, onBeforeMount } from "vue";
 import { useRouter } from "vue-router";
@@ -71,10 +72,10 @@ async function checkMenuListCanView() {
       data: {
         resource_name: "",
         id: "",
-        sys_name: "SFC",
+        sys_name: "ETS",
       },
     });
-    const temp = res?.data || [];
+    const temp = getSortedData(res?.data || []);
     const currentPath = router.currentRoute.value.path.toLowerCase();
     const paths = [...getPathList(temp), "/404", "/login", "/", "/site"];
 
@@ -122,7 +123,7 @@ async function getUserData() {
     // throw new Error();
     // return;
     const res = await axios({
-      url: "/common/sfc/authorization",
+      url: "/api/auth/authorization",
       method: "post",
       showError: false,
     });
@@ -141,5 +142,27 @@ async function getUserData() {
 function logout() {
   router.push({ name: "login" });
   store.commit("global/logout");
+}
+
+function getSortedData(data) {
+  const temp = data
+    // .filter((o) => o.can_view === "Y")
+    .sort((a, b) => a.sort - b.sort)
+    .map((obj, idx) => {
+      return {
+        ...obj,
+        uuid: uuidv4(),
+        children: obj?.children
+          ? obj.children
+              // .filter((o) => o.can_view === "Y")
+              .sort((a, b) => a.sort - b.sort)
+              .map((o) => {
+                return { ...o, uuid: uuidv4() };
+              })
+          : [],
+      };
+    });
+
+  return temp;
 }
 </script>

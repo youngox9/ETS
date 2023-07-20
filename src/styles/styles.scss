@@ -4,7 +4,7 @@ $navWidth: 200px;
 $contentWdith: 100%;
 
 // color ==================
-$base-color: #003a74;
+$base-color: #00695c;
 $base-dark-color: lighten($base-color, 10%);
 $warning-color: #f57f17;
 $danger-color: #d32f2f;
@@ -138,8 +138,7 @@ a {
       font-size: 20px;
       font-weight: bolder;
       margin: 0 0 12px 0;
-      // color: black;
-      color: var(--el-text-color-regular);
+      color: black;
       border-bottom: 2px solid var(--el-color-primary);
       display: inline-block;
       padding-bottom: 6px;
@@ -474,6 +473,15 @@ a {
     display: none;
     @media (max-width: $md) {
       display: block;
+      position: absolute;
+      height: auto;
+      right: 6px;
+      top: 10px;
+      height: auto;
+      background-color: transparent;
+      border: 1px solid white;
+      color: white;
+      z-index: 2;
     }
   }
 
@@ -541,18 +549,18 @@ a {
     > .el-button {
       color: white;
     }
-    // > p {
-    //   color: white;
-    //   padding: 8px 12px;
-    //   font-size: 14px;
-    // }
+    > p {
+      color: white;
+      padding: 8px 12px;
+      font-size: 14px;
+    }
     @media (max-width: $md) {
       top: 0px;
       width: 100%;
       justify-content: flex-end;
       align-items: center;
       z-index: 3;
-      padding-right: 12px;
+      padding-right: 64px;
     }
   }
 
@@ -623,13 +631,102 @@ a {
         background-color: $nav-color;
         backdrop-filter: blur(8px);
 
+        .menu {
+          .menu-item {
+            border: 1px solid rgba(255, 255, 255, 0);
+            background-color: rgba(255, 255, 255, 0.12);
+            border-radius: 4px;
+            padding: 4px 4px 4px 12px;
+            margin-bottom: 12px;
+            position: relative;
+            font-size: 13px;
+
+            cursor: pointer;
+            line-height: 1.5;
+            transition: 0.6s ease all;
+            > span {
+              display: block;
+              width: 100%;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+            }
+            &.menu-item-has-child {
+              > span {
+                width: 80%;
+              }
+            }
+
+            &:hover {
+              background-color: rgba(255, 255, 255, 0.3);
+            }
+            &.active {
+              color: white;
+              background-color: $base-color;
+              border: 1px solid rgba(255, 255, 255, 0.7);
+              font-weight: bolder;
+              .arrow {
+                .ov-icon {
+                  transform: rotate(90deg);
+                }
+              }
+              & + .sub-menu {
+                display: block;
+              }
+            }
+            .arrow {
+              position: absolute;
+              z-index: 2;
+              top: 50%;
+              right: 0px;
+              transform: translate(0, -50%);
+              width: 20%;
+              height: 100%;
+              display: flex;
+              align-items: center;
+              justify-content: flex-end;
+            }
+          }
+          .sub-menu {
+            padding-left: 12px;
+            margin: 12px 0;
+            display: none;
+          }
+        }
+        // .el-menu {
+        //   .el-menu-item,
+        //   .el-sub-menu__title {
+        //     color: white;
+        //     font-weight: bolder;
+        //     // border: 1px solid red;
+        //     // background-color: rgba(255, 255, 255, 0.12);
+
+        //     // margin-bottom: 4px;
+        //     border-radius: 2px;
+        //     &.is-active {
+        //       color: white;
+        //       background-color: rgba(255, 255, 255, 0.5);
+        //     }
+        //     span {
+        //       width: 100%;
+        //       overflow: hidden;
+        //       text-overflow: ellipsis;
+        //       // margin: 0px 0;
+        //       // color: white;
+        //     }
+        //   }
+        //   // .el-sub-menu__title {
+        //   //   padding-right: 22px;
+        //   // }
+        // }
+
         @media (max-width: $md) {
           position: fixed;
           flex-direction: column;
           width: 100%;
           height: 100%;
           top: 0px;
-          // padding-top: 42px;
+          padding-top: 42px;
 
           button {
             width: 100%;
@@ -786,7 +883,7 @@ a {
     background-color: white;
     // border-radius: 4px;
     box-shadow: 0px 0px 28px rgba(0, 0, 0, 0.4);
-    background-color: var(--el-bg-color-page);
+    background-color: white;
     z-index: 2;
     position: relative;
 
@@ -903,7 +1000,7 @@ a {
         font-weight: 600;
         height: auto;
         min-height: 22px;
-        margin-bottom: 0px;
+        margin-bottom: 6px;
       }
       .el-form-item__error {
         font-size: 10px;
@@ -980,7 +1077,7 @@ th {
 }
 
 .el-popper {
-  // max-width: 300px;
+  max-width: 300px;
   padding: 6px 12px;
   background: #fff;
   font-size: 12px;

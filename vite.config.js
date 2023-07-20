@@ -51,5 +51,8 @@ export default defineConfig({
   preview: {
     cors: true,
   },
+  optimizeDeps: {
+    exclude: ["oh-vue-icons/icons"],
+  },
   ...(VITE_DEFAULT_SETTING?.[env] || {}),
 });

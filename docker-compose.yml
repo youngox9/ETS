@@ -1,0 +1,59 @@
+#后台执行该服务可以加上 -d 参数：
+##docker-compose up -d
+version: "3.7" # 文件的版本，但現在已經被棄用了所以版本這段可有可無
+
+services: #列出組成應用程式的所有元件 services 為 Docker Compose 的最小單位
+  # 定義要運行的服務
+  etsdev:
+   # 運行的服務，提供給 docker-compose 及 network 使用
+   build:
+    #dockerfile的路径
+    context: .
+    #dockerfile的名称
+    dockerfile: Dockerfile
+   image: nginx-etsdev
+    #容器名称   
+   container_name: etsdev
+   ports:
+      - "8002:8002" # host & 'etsdev'容器埠號設定為 8002，有需要可以新增其他埠號
+   #command: "pm2-runtime  ecosystem.config.js --only PROD"
+   environment: # 當應用程式執行時，容器會設定的環境變數
+    PORT: 8002
+    NODE_ENV: "development"
+   working_dir: /workspace
+   volumes:
+      # 掛載定義，'.'的意思是專案當前目錄，冒號後面 '/dist' 為掛載位子，名稱會對應到你 dockerfile 底下volume的名稱
+      - ./dist:/workspace
+  etsprod:
+   build:
+      #dockerfile的路径
+    context: .
+      #dockerfile的名称
+    dockerfile: Dockerfile
+   image: nginx-etsprod
+    #容器名称   
+   container_name: etsprod
+   ports:
+      - "8082:8089"
+   #command: "pm2-runtime  ecosystem.config.js --only PROD"
+   environment:
+    PORT: 8082
+    NODE_ENV: "production"
+   working_dir: /workspace
+   volumes:
+      - ./dist:/workspace
+      
+      
+#若想要把 app container 加入一個已存在的網路（或是不想建立[projectname]＿default的網路），我們可以加入一個external和name的list來讓app 加入指定的網路：
+networks:
+  default:
+    name: bi-nodejs_default
+    external: true
+      # 設定網路類型為 bridge(最常用且為預設)
+      # driver 類型有 bridge、host、overlay、macvlan、none
+      # bridge network : 每個獨立的 container 都有一個 software bridge 作為對外部的連線(全部連到同一個出口)
+      # host network : 使用與 Docker Host 相同的網路 、 僅在 Linux 上才有用，最後一定要對外開放port才會有功能
+      # overlay network : 要啟用 swarm service 來讓多個 container 可以相互溝通，詳細資訊底下放連結
+      # macvlan network : 可以讓使用者直接分配實體網卡的 MAC address 給特定的 container，講白了就是讓 container 連接到實體網卡的網路
+      # none : 不給 container 使用網路，不讓他對外聯繫
+      # https://godleon.github.io/blog/Docker/docker-network-overview/#Host-Network

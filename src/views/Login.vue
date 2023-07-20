@@ -163,6 +163,7 @@ async function getList() {
       data: {
         resource_name: "",
         id: "",
+        sys_name: "ETS",
       },
     });
     return res?.data || [];
@@ -183,6 +184,7 @@ async function onLogin() {
       method: "post",
       data: {
         ...loginForm.value,
+        sys_name: "ETS",
       },
     });
     const profile = res?.data || {};
