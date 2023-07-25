@@ -59,7 +59,7 @@ async function onInit() {
 /**
  * 取得列表檢查使用者是否可以進入，否則就踢到login
  */
-async function checkMenuListCanView() {
+ async function checkMenuListCanView() {
   // 如果是管理者就不用檢查了
 
   store.commit("global/setIsLoading", true);
@@ -115,6 +115,7 @@ function getPathList(list = []) {
     return [...prev];
   }, []);
 }
+
 /**
  * 檢查權限表
  */
