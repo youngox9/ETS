@@ -3,7 +3,7 @@
     <PrinterHeader :title="'員工訓練履歷表'" />
     <!-- etsb -->
     <ETST001_Table :data="data" />
-    <p>P-05-01-04-01</p>
+    <p>MA-QR-028-01</p>
   </div>
 </template>
 

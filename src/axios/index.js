@@ -45,18 +45,13 @@ export default function (config = {}) {
   } else if (url.includes("/LABEL/")) {
     // 如果url包含/LABEL/, url強制改成LABEL主機
     baseURL = URL_CONFIG.LABEL;
-  } else if (url.includes("/aps/")) {
+  } else if (
+    url.includes("/ets/") ||
+    url.includes("/calendar/") ||
+    url.includes("/meeting/")
+  ) {
     // 如果url包含/LABEL/, url強制改成LABEL主機
-    baseURL = URL_CONFIG.ORD;
-  } else if (url.includes("/axm/")) {
-    // 如果url包含/LABEL/, url強制改成LABEL主機
-    baseURL = URL_CONFIG.ORD;
-  } else if (url.includes("/ord/")) {
-    // 如果url包含/LABEL/, url強制改成LABEL主機
-    baseURL = URL_CONFIG.ORD;
-  } else if (url.includes("/ain/")) {
-    // 如果url包含/LABEL/, url強制改成LABEL主機
-    baseURL = URL_CONFIG.ORD;
+    baseURL = URL_CONFIG.ETS;
   }
 
   const instance = axios.create({
@@ -74,9 +69,8 @@ export default function (config = {}) {
     (response) => {
       return response;
     },
-    async (error) => {
+    (error) => {
       const errorCode = error?.response?.status;
-      error.errorCode = errorCode;
       console.log(
         "URL :",
         url,
@@ -86,7 +80,7 @@ export default function (config = {}) {
         errorCode
       );
 
-      let msg = await getErrorMsg(error);
+      let msg = getErrorMsg(error);
       let title = `${error?.message || t("error")}`;
 
       if (showError) {

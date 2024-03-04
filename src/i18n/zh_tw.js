@@ -723,4 +723,5 @@ export default {
     OOAGMODDT_E: '異動日期訖',
     OOAG003: '部門編號',
     download_template: '下載範本',
+    room_no: '會議室',
 };

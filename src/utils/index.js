@@ -89,6 +89,18 @@ export const VALIDATIONS = {
     },
     trigger: ["blur", "change"],
   }),
+  dateRange: (props = {}) => ({
+    required: true,
+    validator: async (rule, value, callback) => {
+      const res = value?.[0] && value?.[1];
+      if (res) {
+        callback();
+      } else {
+        callback(new Error("日期區間錯誤"));
+      }
+    },
+    trigger: ["blur", "change"],
+  }),
 };
 
 export function sumNumbers(numbers = []) {
