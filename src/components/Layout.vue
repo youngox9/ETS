@@ -8,7 +8,7 @@
 <script setup>
 import { v4 as uuidv4 } from "uuid";
 import { useStore } from "vuex";
-import { onMounted, computed, onBeforeMount } from "vue";
+import { onMounted, computed, onBeforeMount, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 
@@ -22,6 +22,7 @@ const store = useStore();
 const router = useRouter();
 
 const [isReady, setIsReady] = useState(false);
+const prevPath = ref("");
 
 const isAdmin = computed(() => {
   const role_id = store?.state?.global?.profile?.role_id;
@@ -37,6 +38,7 @@ onBeforeMount(() => {
  */
 async function onInit() {
   setIsReady(false);
+
   try {
     const accessToken = store?.state?.global?.profile?.accessToken || "";
     if (accessToken) {
@@ -59,7 +61,7 @@ async function onInit() {
 /**
  * 取得列表檢查使用者是否可以進入，否則就踢到login
  */
- async function checkMenuListCanView() {
+async function checkMenuListCanView() {
   // 如果是管理者就不用檢查了
 
   store.commit("global/setIsLoading", true);
@@ -143,6 +145,8 @@ async function getUserData() {
 function logout() {
   router.push({ name: "login" });
   store.commit("global/logout");
+  const prevPath = router?.currentRoute?.value?.path;
+  localStorage.setItem("prevPath", prevPath);
 }
 
 function getSortedData(data) {

@@ -191,14 +191,11 @@ async function onLogin() {
     const profile = res?.data || {};
     store.commit("global/setProfile", profile);
     const menuList = (await getList()) || [];
-    const firstUrl = menuList?.[0]?.url;
-
-    if (firstUrl) {
-      // 轉導至menu list 第一個
-      router.push({ path: firstUrl });
-    } else {
-      router.push({ name: "index" });
+    let enterUrl = menuList?.[0]?.url || "index";
+    if (localStorage.getItem("prevPath")) {
+      enterUrl = localStorage.getItem("prevPath");
     }
+    router.push({ path: enterUrl });
   } catch (e) {
     console.log(">>>>", e);
   }
