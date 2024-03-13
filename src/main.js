@@ -26,6 +26,8 @@ import * as RiIcons from "oh-vue-icons/icons/ri";
 
 import { OhVueIcon, addIcons } from "oh-vue-icons";
 
+import VueTagsInput from "@sipec/vue3-tags-input";
+
 import $ from "jquery";
 
 window.jQuery = $;
@@ -56,6 +58,7 @@ app.component("TableWithPagination", TableWithPagination);
 app.component("Autocomplete", Autocomplete);
 app.component("DepDropdown", DepDropdown);
 app.component("DynamicField", DynamicField);
+app.component("VueTagsInput", VueTagsInput);
 
 app.component("Layout", Layout);
 app.mount("#app");

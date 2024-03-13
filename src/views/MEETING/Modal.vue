@@ -21,8 +21,10 @@
         <el-col :span="24">
           <el-form-item :label="$t('room_no')" prop="room_no">
             <el-select v-model="form.room_no" :placeholder="'room_no'">
-                <el-option label="A廠1樓會議室" :value="'101'" />
-                <el-option label="A廠2樓教育訓練室" :value="'102'" />
+              <el-option label="A棟1F會議室" :value="'101'" />
+              <el-option label="A棟2F(訓練教室)大會議室" :value="'102'" />
+              <el-option label="C棟1F會議室" :value="'301'" />
+              <el-option label="D棟1F會議室" :value="'401'" />
             </el-select>
           </el-form-item>
         </el-col>
@@ -54,6 +56,24 @@
               :value-format="DATETIME_FORMAT"
               @change="onDatePickerChange"
               :popper-options="{ placement: 'auto' }"
+            />
+          </el-form-item>
+        </el-col>
+
+        <el-col :span="24">
+          <el-form-item :label="$t('mailaddress')" prop="mailaddress">
+            <!-- <el-input v-model="form.mailaddress" type="textarea"></el-input> -->
+            <!-- {{ form.mailaddress }} -->
+            <vue-tags-input
+              placeholder="add user email"
+              :tags="tags"
+              @tags-changed="
+                (newTags) => {
+                  console.log(newTags);
+                  tags = newTags.map((o) => o.text);
+                  form.mailaddress = newTags.map((o) => o.text).join(';');
+                }
+              "
             />
           </el-form-item>
         </el-col>
@@ -100,6 +120,7 @@ import { useVModel } from "@vueuse/core";
 const INITIAL_FORMDATA = {
   dateRange: "",
   all_day: 0,
+  mailaddress: "",
 };
 
 const props = defineProps(["modalConfig"]);
@@ -122,8 +143,8 @@ const rules = reactive({
   dateRange: VALIDATIONS.dateRange(),
 });
 
-
 const formEl = ref(null);
+const tags = ref([]);
 
 const ENT = computed(() => store?.state?.global?.ENT || "");
 
@@ -140,7 +161,10 @@ watch(
         const record = props?.modalConfig?.data || {};
         const { start, end } = record;
         const dateRange = [start, end];
-        setForm({ ...record, dateRange });
+        const mailaddress = record?.mailaddress || "";
+        const newTags = mailaddress ? mailaddress.split(";") : [];
+        form.value = { ...record, dateRange };
+        tags.value = newTags;
       }
     } else {
       setForm({ ...INITIAL_FORMDATA });
@@ -233,7 +257,7 @@ async function onPut() {
       user_id: profile.value?.username,
     };
 
-    console.log("form.data >>>", data);
+    //console.log("form.data >>>", data);
 
     const res = await axios({
       url: `/calendar/events/${form.value.id}`,

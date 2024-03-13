@@ -693,6 +693,8 @@ export default {
     ETSD001: '課程序號',
     ETSD002: '員工編號',
     ETSD003: '訓練日期',
+    ETSD003_S: '訓練日期起',
+    ETSD003_E: '訓練日期迄',
     ETSD004: '訓練單位',
     ETSD004_DESC: '訓練單位説明',
     ETSD005: '時數',
@@ -724,4 +726,5 @@ export default {
     OOAG003: '部門編號',
     download_template: '下載範本',
     room_no: '會議室',
+    mailaddress: '邀請對象',
 };

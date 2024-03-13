@@ -24,8 +24,10 @@
                   :label="item.label"
                   :value="item.value"
                 /> -->
-                <el-option label="101" :value="'101'" />
-                <el-option label="102" :value="'102'" />
+                <el-option label="A棟1F會議室" :value="'101'" />
+                <el-option label="A棟2F(訓練教室)大會議室" :value="'102'" />
+                <el-option label="C棟1F會議室" :value="'301'" />
+                <el-option label="D棟1F會議室" :value="'401'" />
               </el-select>
             </el-form-item>
           </el-col>
@@ -183,7 +185,7 @@ import {
 
 import { useI18n } from "vue-i18n";
 import _ from "lodash";
-
+import { useState, jsonToExcel, ElNotification } from "@/utils";
 import moment from "moment";
 
 import Modal from "./Modal.vue";
@@ -200,7 +202,7 @@ const selectedDate = ref(moment().format("YYYY-MM-DD HH:mm"));
 
 const events = ref([]);
 const modalConfig = ref({ isOpen: false, mode: "edit" });
-const form = ref({});
+//const form = ref({});
 const formRef = ref();
 const store = useStore();
 
@@ -234,6 +236,11 @@ const room_no_options = computed(() => {
   return temp;
 });
 
+let [form, setForm] = useState({
+  start: moment(new Date()).format("YYYY-MM-DD"),
+  end: moment(new Date()).add(2, "months").format("YYYY-MM-DD"), // 将 end 设置为下个月
+});
+
 const ENT = computed(() => store?.state?.global?.ENT || "");
 
 const columnsSetting = computed(() => {
@@ -257,6 +264,9 @@ const columnsSetting = computed(() => {
     start: { width: 150, align: "left" },
     end: { width: 150, align: "left" },
     description: {
+      // width: 300,
+    },
+    mailaddress: {
       // width: 300,
     },
   };
@@ -330,6 +340,7 @@ async function onDelete(record) {
       method: "DELETE",
       params: {
         id: record.id,
+        user_id: profile.value?.username,
       },
     });
     await getList();

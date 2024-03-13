@@ -1160,3 +1160,24 @@ th {
     }
   }
 }
+
+.vue-tags-input {
+  width: 100%;
+  background-color: var(
+    --el-input-bg-color,
+    var(--el-fill-color-blank)
+  ) !important;
+
+  padding: 0px !important;
+  box-shadow: 0 0 0 1px var(--el-input-border-color, var(--el-border-color))
+    inset !important;
+  border-radius: var(
+    --el-input-border-radius,
+    var(--el-border-radius-base)
+  ) !important;
+
+  .ti-input {
+    background-color: var(--el-input-bg-color, var(--el-fill-color-blank));
+    border: 0px solid transparent !important;
+  }
+}

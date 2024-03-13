@@ -48,9 +48,20 @@
           </el-col>
           <!-- ETSD003 訓練日期 -->
           <el-col :xs="24" :sm="4">
-            <el-form-item :label="$t('ETSD003')" prop="ETSD003">
+            <el-form-item :label="$t('ETSD003_S')" prop="ETSD003_S">
               <el-date-picker
-                v-model="form.ETSD003"
+                v-model="form.ETSD003_S"
+                type="date"
+                :style="{ width: '100%' }"
+                format="YYYY-MM-DD"
+                value-format="YYYY-MM-DD"
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :xs="24" :sm="4">
+            <el-form-item :label="$t('ETSD003_E')" prop="ETSD003_E">
+              <el-date-picker
+                v-model="form.ETSD003_E"
                 type="date"
                 :style="{ width: '100%' }"
                 format="YYYY-MM-DD"
