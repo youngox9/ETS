@@ -17,12 +17,16 @@ function getProfile() {
   return {};
 }
 
-function getErrorMsg(e) {
+async function getErrorMsg(e) {
+  // console.log(e?.response);
   const paths = ["response.data", "response.data.message", "data"];
-  const errorStr = paths.reduce((prev, p) => {
+  const errorStr = await paths.reduce(async (prev, p) => {
     const str = _.get(e, p);
     if (!prev && typeof str === "string") {
       return str;
+    } else if (str instanceof Blob) {
+      const blobText = (await str?.text()) || "";
+      if (blobText) return blobText;
     }
     return prev;
   }, "");
@@ -70,7 +74,7 @@ export default function (config = {}) {
     (response) => {
       return response;
     },
-    (error) => {
+    async (error) => {
       const errorCode = error?.response?.status;
       error.errorCode = errorCode;
       console.log(
@@ -82,7 +86,7 @@ export default function (config = {}) {
         errorCode
       );
 
-      let msg = getErrorMsg(error);
+      let msg = await getErrorMsg(error);
       let title = `${error?.message || t("error")}`;
 
       if (showError) {
