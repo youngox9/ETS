@@ -65,8 +65,11 @@
             <!-- <el-input v-model="form.mailaddress" type="textarea"></el-input> -->
             <!-- {{ form.mailaddress }} -->
             <vue-tags-input
+              v-model="tagText"
               placeholder="add user email"
               :tags="tags"
+              :add-only-from-autocomplete="true"
+              :add-on-blur="false"
               @tags-changed="
                 (newTags) => {
                   console.log(newTags);
@@ -74,7 +77,9 @@
                   form.mailaddress = newTags.map((o) => o.text).join(';');
                 }
               "
+              :autocomplete-items="filteredItems"
             />
+
           </el-form-item>
         </el-col>
 
@@ -145,18 +150,54 @@ const rules = reactive({
 
 const formEl = ref(null);
 const tags = ref([]);
+const tagText = ref("");
 
 const ENT = computed(() => store?.state?.global?.ENT || "");
 
 const DATETIME_FORMAT = "YYYY-MM-DD HH:mm";
 
+const mailAddressList = ref([]);
+
 const profile = computed(() => {
   return store?.state?.global?.profile || {};
 });
+
+
+
+
+// const filteredItems = computed(() => {
+//   const reuslt = mailAddressList.value.filter((i) => {
+//     const text1 = i?.text?.toLowerCase() || "";
+//     const text2 = tagText?.value?.toLowerCase() || "";
+//     return text1.indexOf(text2) !== -1;
+//   });
+//   return reuslt;
+// });
+
+//modify by ianlo007 20240315
+const filteredItems = computed(() => {
+  if (!tagText.value) {
+    return mailAddressList.value;
+  }
+  console.log(mailAddressList.value)
+  const searchText = tagText.value;
+  return mailAddressList.value.filter(item => 
+    item.text.includes(searchText) || item.displayName.includes(searchText)
+  );
+});
+
+
+
+
 watch(
   () => props?.modalConfig?.isOpen,
   (val, prev) => {
     if (val) {
+      const formObj = formEl?.value;
+      if (formObj) {
+        formObj.clearValidate();
+      }
+
       if (props?.modalConfig?.data) {
         const record = props?.modalConfig?.data || {};
         const { start, end } = record;
@@ -164,6 +205,7 @@ watch(
         const mailaddress = record?.mailaddress || "";
         const newTags = mailaddress ? mailaddress.split(";") : [];
         form.value = { ...record, dateRange };
+        tagText.value = "";
         tags.value = newTags;
       }
     } else {
@@ -172,6 +214,33 @@ watch(
   },
   { deep: true }
 );
+
+onMounted(() => {
+  getMailAddressList();
+});
+
+async function getMailAddressList() {
+  store.commit("global/setIsLoading", true);
+  try {
+    const res = await axios({
+      url: "/calendar/getMailAddress",
+      method: "GET",
+      data: {
+        ENT: ENT.value,
+        user_id: profile.value?.username,
+      },
+    });
+    const temp = res?.data || [];
+
+    const temp1 = temp.map((o) => {
+      return { text: o.email ,displayName:o.displayName};
+    });
+    mailAddressList.value = temp1 || [];
+  } catch (e) {
+    console.log(e);
+  }
+  store.commit("global/setIsLoading", false);
+}
 
 function onAllDayChange(val) {
   const { start, end } = val;
@@ -271,3 +340,4 @@ async function onPut() {
   store.commit("global/setIsLoading", false);
 }
 </script>
+import { result } from "lodash";

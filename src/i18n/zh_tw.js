@@ -727,4 +727,9 @@ export default {
     download_template: '下載範本',
     room_no: '會議室',
     mailaddress: '邀請對象',
+    start: '開始時間',
+    end: '結束時間',
+    description: '會議內容',
+    user_id: '工號',
+    user_name: '申請人',
 };

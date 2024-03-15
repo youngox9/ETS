@@ -259,6 +259,9 @@ const columnsSetting = computed(() => {
       fixed: "left",
     },
     user_id: {
+      width: 120,
+    },
+    user_name: {
       width: 150,
     },
     start: { width: 150, align: "left" },

@@ -1177,7 +1177,29 @@ th {
   ) !important;
 
   .ti-input {
-    background-color: var(--el-input-bg-color, var(--el-fill-color-blank));
+    background-color: var(--el-dialog-bg-color) !important;
     border: 0px solid transparent !important;
+  }
+  .ti-new-tag-input {
+    background-color: transparent !important;
+  }
+  .ti-autocomplete {
+    background-color: var(--el-dialog-bg-color) !important;
+    border: none !important;
+    box-shadow: 0 0 0 1px var(--el-input-border-color, var(--el-border-color))
+      inset !important;
+    border-radius: var(
+      --el-input-border-radius,
+      var(--el-border-radius-base)
+    ) !important;
+    ul {
+      background-color: var(
+        --el-input-bg-color,
+        var(--el-fill-color-blank)
+      ) !important;
+    }
+  }
+  .ti-item {
+    line-height: 1.5 !important;
   }
 }
