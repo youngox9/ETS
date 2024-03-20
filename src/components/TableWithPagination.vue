@@ -108,8 +108,9 @@ async function onPageChange(config) {
 }
 
 function onPageSizeChange(e) {
-  console.log("change", pageConfig.value);
-  props.onChange({ ...pageConfig.value });
+  const newConfig = { ...pageConfig.value, page: 1 };
+  setPageConfig(newConfig);
+  props.onChange({ ...pageConfig.value, page: 1 });
 }
 
 const querySearchAsync = (queryString, cb) => {
