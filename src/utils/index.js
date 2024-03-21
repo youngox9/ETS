@@ -11,6 +11,8 @@ import i18n from "@/i18n";
 import * as XLSX from "xlsx/xlsx.mjs";
 import { IS_DEV, URL_CONFIG, NOTIFICATION_MAX_COUNT } from "@/config";
 
+const { t = (v) => v } = i18n?.global || {};
+
 const CancelToken = axiosGlobal.CancelToken;
 
 export function getDateFormat(val, format = "YYYY-MM-DD") {
@@ -23,6 +25,21 @@ export const VALIDATIONS = {
     message: "此欄位為必填",
     trigger: ["blur"],
     ...p,
+  }),
+  orIsEmptry: (props = {}) => ({
+    validator: async (rule, value, callback) => {
+      const { validator, form, keys = [] } = props;
+      const isPass = keys.some((k) => {
+        return !!form?.value?.[k];
+      });
+      if (!isPass) {
+        const errorText = keys.map((o) => t(o)).join(",");
+        callback(new Error(`${errorText} 至少填一個`));
+      } else {
+        callback();
+      }
+    },
+    trigger: ["blur"],
   }),
   checkMachine: (props = {}) => ({
     validator: async (rule, value, callback) => {
