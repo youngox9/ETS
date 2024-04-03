@@ -44,20 +44,33 @@
           </el-form-item>
         </el-col>
         <el-col :span="24">
-          <el-form-item :label="$t('dateRange')" prop="dateRange">
-            <el-date-picker
-              v-model="form.dateRange"
-              :type="form.all_day === 1 ? 'daterange' : 'datetimerange'"
-              range-separator="至"
-              start-placeholder="開始時間"
-              end-placeholder="結束時間"
-              :disabled-date="onDisabledDate"
-              :format="DATETIME_FORMAT"
-              :value-format="DATETIME_FORMAT"
-              @change="onDatePickerChange"
-              :popper-options="{ placement: 'auto' }"
-            />
-          </el-form-item>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item :label="$t('start')" prop="start">
+                <el-date-picker
+                  v-model="form.start"
+                  :type="form.all_day === 1 ? 'date' : 'datetime'"
+                  :disabled-date="disableBeforeToday"
+                  :format="DATETIME_FORMAT"
+                  :value-format="DATETIME_FORMAT"
+                  :popper-options="{ placement: 'auto' }"
+                  @change="onDatePickerChange"
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item :label="$t('end')" prop="end">
+                <el-date-picker
+                  v-model="form.end"
+                  :type="form.all_day === 1 ? 'date' : 'datetime'"
+                  :disabled-date="disableBeforeToday"
+                  :format="DATETIME_FORMAT"
+                  :value-format="DATETIME_FORMAT"
+                  :popper-options="{ placement: 'auto' }"
+                />
+              </el-form-item>
+            </el-col>
+          </el-row>
         </el-col>
 
         <el-col :span="24">
@@ -79,7 +92,6 @@
               "
               :autocomplete-items="filteredItems"
             />
-
           </el-form-item>
         </el-col>
 
@@ -118,7 +130,12 @@ import { useRoute, useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import moment from "moment";
 import axios from "@/axios";
-import { VALIDATIONS, useState } from "@/utils";
+import {
+  VALIDATIONS,
+  useState,
+  disableBeforeToday,
+  DATETIME_FORMAT,
+} from "@/utils";
 
 import { useVModel } from "@vueuse/core";
 
@@ -142,10 +159,15 @@ const [form, setForm] = useState(INITIAL_FORMDATA);
 const modalConfig = useVModel(props, "modalConfig", emit);
 
 const rules = reactive({
-  start: VALIDATIONS.isEmpty(),
+  start: [
+    VALIDATIONS.isEmpty(),
+    VALIDATIONS.dateIsAfter({ form: () => form.value, key: "end" }),
+  ],
+  end: [
+    VALIDATIONS.isEmpty(),
+    VALIDATIONS.dateIsBefore({ form: () => form.value, key: "start" }),
+  ],
   title: VALIDATIONS.isEmpty(),
-  //   description: VALIDATIONS.isEmpty(),
-  dateRange: VALIDATIONS.dateRange(),
 });
 
 const formEl = ref(null);
@@ -154,40 +176,23 @@ const tagText = ref("");
 
 const ENT = computed(() => store?.state?.global?.ENT || "");
 
-const DATETIME_FORMAT = "YYYY-MM-DD HH:mm";
-
 const mailAddressList = ref([]);
 
 const profile = computed(() => {
   return store?.state?.global?.profile || {};
 });
 
-
-
-
-// const filteredItems = computed(() => {
-//   const reuslt = mailAddressList.value.filter((i) => {
-//     const text1 = i?.text?.toLowerCase() || "";
-//     const text2 = tagText?.value?.toLowerCase() || "";
-//     return text1.indexOf(text2) !== -1;
-//   });
-//   return reuslt;
-// });
-
-//modify by ianlo007 20240315
 const filteredItems = computed(() => {
   if (!tagText.value) {
     return mailAddressList.value;
   }
-  console.log(mailAddressList.value)
+
   const searchText = tagText.value;
-  return mailAddressList.value.filter(item => 
-    item.text.includes(searchText) || item.displayName.includes(searchText)
+  return mailAddressList.value.filter(
+    (item) =>
+      item.text.includes(searchText) || item.displayName.includes(searchText)
   );
 });
-
-
-
 
 watch(
   () => props?.modalConfig?.isOpen,
@@ -200,11 +205,9 @@ watch(
 
       if (props?.modalConfig?.data) {
         const record = props?.modalConfig?.data || {};
-        const { start, end } = record;
-        const dateRange = [start, end];
         const mailaddress = record?.mailaddress || "";
         const newTags = mailaddress ? mailaddress.split(";") : [];
-        form.value = { ...record, dateRange };
+        form.value = { ...record };
         tagText.value = "";
         tags.value = newTags;
       }
@@ -233,7 +236,7 @@ async function getMailAddressList() {
     const temp = res?.data || [];
 
     const temp1 = temp.map((o) => {
-      return { text: o.email ,displayName:o.displayName};
+      return { text: o.email, displayName: o.displayName };
     });
     mailAddressList.value = temp1 || [];
   } catch (e) {
@@ -250,11 +253,10 @@ function onAllDayChange(val) {
   setForm({ ...form.value, start: s1, end: e1 });
 }
 function onDatePickerChange(dateRange) {
-  const s = dateRange?.[0];
-  const e = dateRange?.[1];
-  const start = moment(s).format(DATETIME_FORMAT);
-  const end = moment(e).format(DATETIME_FORMAT);
-  setForm({ ...form.value, start, end });
+  const d1 = moment(dateRange);
+  const d2 = d1.add(1, "hours");
+  const end = moment(d2).format(DATETIME_FORMAT);
+  setForm({ ...form.value, end });
 }
 
 function onDisabledDate(val) {
